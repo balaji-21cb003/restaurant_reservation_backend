@@ -34,7 +34,7 @@ const restaurantSchema = new mongoose.Schema({
     required: true
   }
 }, {
-  collection: 'restaruntdetails' // Set the collection name
+  collection: 'restaruntdetails' 
 });
 
 module.exports = mongoose.model('Restaurant', restaurantSchema);

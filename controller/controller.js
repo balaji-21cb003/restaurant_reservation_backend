@@ -7,9 +7,8 @@ const nodemailer = require("nodemailer");
 
 const restaurantdetails = async (req, res) => {
   try {
-    // Use Mongoose to find all restaurant details from the database
     const restaurants = await Restaurant.find();
-    res.json(restaurants); // Send the restaurant details as JSON response
+    res.json(restaurants); 
   } catch (error) {
     console.error("Error fetching restaurant details:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -20,7 +19,6 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     console.log(name, email, password);
-    //check if name is entered
     if (!name) {
       return res.json({
         error: "Name is required",
@@ -33,14 +31,13 @@ const registerUser = async (req, res) => {
       });
     }
 
-    //check if password is entered
     if (!password || password.length < 6) {
       return res.json({
         error: "Password is required and should be at least 6 characters long",
       });
     }
 
-    //check email
+
     const exists = await User.findOne({ email });
     if (exists) {
       return res.json({
@@ -65,7 +62,6 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     // console.log(req.body)
-    // check if user exists
     const user = await User.findOne({ email });
     if (!user) {
       // console.log(user);
@@ -74,7 +70,6 @@ const loginUser = async (req, res) => {
       });
     }
     // console.log("tyghj")
-    //check if password match
     const match = await comparePassword(password, user.password);
 
     if (match) {
@@ -101,7 +96,6 @@ const loginUser = async (req, res) => {
   }
 };
 
-// Nodemailer transporter setup
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -110,19 +104,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Function to send email using Nodemailer
 async function sendEmail(name, email, phoneNumber, reservationDetails) {
   try {
-    // Destructure the reservation details
     const { Name, City, Cost, Location } = reservationDetails.restaurantDetails;
     const { date, occasion, table, time } = reservationDetails.reservationDetails;
 
-    // Parse date and time
     const selectedDate = new Date(date);
     const formattedDate = selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    // const formattedTime = selectedDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
 
-    // Email content
+    
     const mailOptions = {
       from: "doctocare7@gmail.com",
       to: email,
@@ -154,7 +144,6 @@ async function sendEmail(name, email, phoneNumber, reservationDetails) {
       The Restaurant Team`,
     };
 
-    // Sending email asynchronously
     const info = await transporter.sendMail(mailOptions);
     console.log("Email sent successfully:", info.response);
   } catch (error) {
@@ -168,19 +157,16 @@ async function sendEmail(name, email, phoneNumber, reservationDetails) {
 const tablebook = async (req, res) => {
   try {
     const formData = req.body;
-    console.log("FormData from frontend:", formData);
+    // console.log("FormData from frontend:", formData);
 
-    // Fetch restaurant details based on user selection
     const restaurantDetails = await Restaurant.findOne({ city: formData.city });
     console.log("Restaurant details:", restaurantDetails);
 
-    // Parse date and time
     const selectedDate = new Date(formData.date);
     const formattedDate = selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     const formattedTime = formData.time;
 
 
-    // Create a new reservation document
     const reservation = new Reservation({
       restaurantDetails: {
         city: restaurantDetails.City,
@@ -200,13 +186,11 @@ const tablebook = async (req, res) => {
         selectedTime: formData.time,
       },
     });
-    console.log("Reservation document:", reservation);
-    console.log(formData.time);
+    // console.log("Reservation document:", reservation);
+    // console.log(formData.time);
 
-    // Save the reservation to the database
     await reservation.save();
 
-    // Send confirmation email using Nodemailer
     await sendEmail(
       formData.name,
       formData.email,
@@ -214,7 +198,7 @@ const tablebook = async (req, res) => {
       { restaurantDetails, reservationDetails: formData }
     );
 
-    res.sendStatus(200); // Send success response
+    res.sendStatus(200); 
   } catch (error) {
     console.error("Error processing reservation:", error);
     res.status(500).json({ error: "Internal Server Error" });
