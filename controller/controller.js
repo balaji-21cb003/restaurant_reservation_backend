@@ -148,7 +148,7 @@ async function sendEmail(name, email, phoneNumber, reservationDetails) {
     console.log("Email sent successfully:", info.response);
   } catch (error) {
     console.error("Error sending email:", error);
-    throw error; // Re-throw the error to handle it in the caller function
+    throw error; 
   }
 }
 
