@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 app.use(cors());
 
-mongoose.connect("mongodb://localhost:27017/restarunt_reservation", {
+mongoose.connect("mongodb+srv://balaji:iXrfT94FiD9coHCt@cluster0.cdixply.mongodb.net/restarunt_reservation", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
